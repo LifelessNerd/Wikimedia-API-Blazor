@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Wikimedia-API-Blazor.props" />
+</Project>
