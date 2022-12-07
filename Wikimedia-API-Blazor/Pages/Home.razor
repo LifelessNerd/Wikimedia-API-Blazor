@@ -9,31 +9,81 @@
 Welcome to your new app.
 <br>
 <label for="textbox1">Input:</label>
-<input type="text" @bind="@endpoint"/>
+<input type="text" @bind="@input"/>
 <br>
 <label for="textbox2">Desired:</label>
-<input type="text" @bind="@input"/>
+<input type="text" @bind="@endpoint"/>
 
 <button @onclick="StartProcess">Click me</button>
 
 @code {
 
     HttpClient myRequest = new HttpClient();
-    List<String> links = new List<string>();
+    public List<WikipediaPage> links = new List<WikipediaPage>();
     string input;
     string endpoint;
 
     void StartProcess()
     {
         // Main method that gets called when button is clicked
+        Console.WriteLine(input);
+        WikipediaPage sourcePage = new WikipediaPage(null, input, this);
+        Console.WriteLine(sourcePage.ToString());
+
     }
 
-    async void httpsRequest(string input)
+    public class WikipediaPage
+    {
+        public string? raw;
+        public string? link;
+        public string? displayName;
+        public WikipediaPage? parent;
+        public List<WikipediaPage>? pageLinks; //might need to become <string>
+        public Home main;
+        public WikipediaPage(WikipediaPage? parent, string raw, Home main)
+        {
+            this.raw = raw;
+            this.main = main;
+            updateDisplayAndLink(this.raw);
+
+        }
+        private void updateDisplayAndLink(string raw)
+        {
+            string trimmedTitle = raw.Substring(2, raw.Length - 4);
+            string[] titleSplit = trimmedTitle.Split('|');
+            this.link = titleSplit[0];
+            this.displayName = titleSplit[titleSplit.Length - 1];
+        }
+        public void createLinkList()
+        {
+            main.httpsRequest(this);
+            pageLinks = main.links;
+        }
+
+        public override string ToString()
+        {
+            return $"title: {raw}, link: {link}, displayName: {displayName}";
+        }
+        public void printPageLinks()
+        {
+            try{
+                foreach (WikipediaPage page in pageLinks)
+                {
+                    Console.WriteLine(page.ToString());
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+    }
+    public async void httpsRequest(WikipediaPage query)
     {
         // This function updates our links list for a certain page ('input')
         // Call asynchronous network methods in a try/catch block to handle exceptions.
         try
         {
+            string input = query.link;
             string url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvslots=*&rvprop=content&titles=" + input;
             using HttpResponseMessage response = await myRequest.GetAsync(url);
             response.EnsureSuccessStatusCode();
@@ -50,6 +100,7 @@ Welcome to your new app.
             //Any weird shit will get caught by try/catch
             string pageContent = responseJSON["query"]["pages"][pageId]["revisions"][0]["slots"]["main"]["*"].ToString();
 
+
             Regex pattern = new Regex(@"\[\[(.*?)\]\]"); //Regex generously donated by OpenAI's ChatGPT
 
             MatchCollection matchCollection = pattern.Matches(pageContent);
@@ -59,7 +110,8 @@ Welcome to your new app.
                 string value = deepMatch.Value;
                 if (linkSelection(value))
                 {
-                    links.Add(value);
+                    WikipediaPage page = new WikipediaPage(query, query.raw, this);
+                    links.Add(page);
                     Console.WriteLine(value);
                 }
             }
@@ -94,18 +146,6 @@ Welcome to your new app.
         }
 
         return true;
-    }
-
-    class WikipediaPage
-    {
-        string? title;
-        WikipediaPage? parent;
-        List<string>? pageLinks;
-        public WikipediaPage(WikipediaPage parent, string title)
-        {
-            this.title = title;
-
-        }
     }
 
 
