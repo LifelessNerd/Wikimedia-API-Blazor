@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "lhilEDK2tp96ZWois/gpXsBlY8AX2SAJq7SwD+zyAWA=",
+  "Hash": "/Jw5gc6XIbf+gsdec5KfSWHXq6RuaEHCccCnx3zyo1w=",
   "Source": "Wikimedia-API-Blazor",
   "BasePath": "/",
   "Mode": "Root",
@@ -102,6 +102,23 @@
       "OriginalItemSpec": "C:\\Users\\Menee\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\6.0.11\\runtimes\\browser-wasm\\native\\dotnet.wasm"
     },
     {
+      "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\bin\\Debug\\net6.0\\wwwroot\\_framework\\icudt.dat",
+      "SourceId": "Wikimedia-API-Blazor",
+      "SourceType": "Computed",
+      "ContentRoot": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\bin\\Debug\\net6.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "_framework/icudt.dat",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "BlazorWebAssemblyResource",
+      "AssetTraitValue": "native",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "C:\\Users\\Menee\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\6.0.11\\runtimes\\browser-wasm\\native\\icudt.dat"
+    },
+    {
       "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\bin\\Debug\\net6.0\\wwwroot\\_framework\\icudt_CJK.dat",
       "SourceId": "Wikimedia-API-Blazor",
       "SourceType": "Computed",
@@ -151,23 +168,6 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "Never",
       "OriginalItemSpec": "C:\\Users\\Menee\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\6.0.11\\runtimes\\browser-wasm\\native\\icudt_no_CJK.dat"
-    },
-    {
-      "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\bin\\Debug\\net6.0\\wwwroot\\_framework\\icudt.dat",
-      "SourceId": "Wikimedia-API-Blazor",
-      "SourceType": "Computed",
-      "ContentRoot": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\bin\\Debug\\net6.0\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "_framework/icudt.dat",
-      "AssetKind": "Build",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "BlazorWebAssemblyResource",
-      "AssetTraitValue": "native",
-      "CopyToOutputDirectory": "PreserveNewest",
-      "CopyToPublishDirectory": "Never",
-      "OriginalItemSpec": "C:\\Users\\Menee\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\6.0.11\\runtimes\\browser-wasm\\native\\icudt.dat"
     },
     {
       "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\bin\\Debug\\net6.0\\wwwroot\\_framework\\Microsoft.AspNetCore.Authorization.dll",
@@ -6919,23 +6919,6 @@
       "OriginalItemSpec": "wwwroot\\css\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
-      "SourceId": "Wikimedia-API-Blazor",
-      "SourceType": "Discovered",
-      "ContentRoot": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "css/open-iconic/FONT-LICENSE",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\open-iconic\\FONT-LICENSE"
-    },
-    {
       "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
       "SourceId": "Wikimedia-API-Blazor",
       "SourceType": "Discovered",
@@ -7036,6 +7019,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff"
+    },
+    {
+      "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
+      "SourceId": "Wikimedia-API-Blazor",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "css/open-iconic/FONT-LICENSE",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\open-iconic\\FONT-LICENSE"
     },
     {
       "Identity": "D:\\Programming\\GitHub\\Wikimedia-API-Blazor\\Wikimedia-API-Blazor\\wwwroot\\css\\open-iconic\\ICON-LICENSE",

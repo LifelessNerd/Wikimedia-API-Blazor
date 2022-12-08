@@ -18,7 +18,7 @@ Welcome to your new app.
 
 @code {
 
-    HttpClient myRequest = new HttpClient();
+
     public List<WikipediaPage> links = new List<WikipediaPage>();
     string input;
     string endpoint;
@@ -27,39 +27,113 @@ Welcome to your new app.
     {
         // Main method that gets called when button is clicked
         Console.WriteLine(input);
-        WikipediaPage sourcePage = new WikipediaPage(null, input, this);
-        Console.WriteLine(sourcePage.ToString());
+        WikipediaPage sourcePage = new WikipediaPage(null, input);
+
 
     }
 
     public class WikipediaPage
     {
         public string? raw;
-        public string? link;
-        public string? displayName;
+        public string link;
+        public string displayName;
         public WikipediaPage? parent;
         public List<WikipediaPage>? pageLinks; //might need to become <string>
-        public Home main;
-        public WikipediaPage(WikipediaPage? parent, string raw, Home main)
+        public WikipediaPage(WikipediaPage? parent, string raw)
         {
             this.raw = raw;
-            this.main = main;
-            updateDisplayAndLink(this.raw);
-
-        }
-        private void updateDisplayAndLink(string raw)
-        {
+            //Update link and displayname
             string trimmedTitle = raw.Substring(2, raw.Length - 4);
             string[] titleSplit = trimmedTitle.Split('|');
             this.link = titleSplit[0];
             this.displayName = titleSplit[titleSplit.Length - 1];
-        }
-        public void createLinkList()
-        {
-            main.httpsRequest(this);
-            pageLinks = main.links;
+            createLinkList(); // sets this.pageLinks to list of links
+
         }
 
+        public async void createLinkList()
+        {
+            var something = await httpsRequest(this);
+            pageLinks = something;
+        }
+        public async Task<List<WikipediaPage>> httpsRequest(WikipediaPage page)
+        {
+            // This function updates our links list for a certain page ('input')
+            // Call asynchronous network methods in a try/catch block to handle exceptions.
+            try
+            {
+                HttpClient myRequest = new HttpClient();
+
+                string input = page.link;
+                string url = "https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=revisions&rvslots=*&rvprop=content&titles=" + input;
+                using HttpResponseMessage response = await myRequest.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                // Above three lines can be replaced with new helper method below
+                // string responseBody = await client.GetStringAsync(uri);
+
+                Console.WriteLine(responseBody);
+                JObject responseJSON = JObject.Parse(responseBody);
+                //Console.WriteLine(responseJSON["query"]);
+
+                JObject pagesJSON = (JObject)responseJSON["query"]["pages"];
+                string pageId = pagesJSON.Properties().Select(p => p.Name).ToList()[0];
+                //Any weird shit will get caught by try/catch
+                string pageContent = responseJSON["query"]["pages"][pageId]["revisions"][0]["slots"]["main"]["*"].ToString();
+
+
+                Regex pattern = new Regex(@"\[\[(.*?)\]\]"); //Regex generously donated by OpenAI's ChatGPT
+
+                MatchCollection matchCollection = pattern.Matches(pageContent);
+                List<WikipediaPage> links = new List<WikipediaPage>();
+                foreach (Match deepMatch in matchCollection)
+                {
+                    string value = deepMatch.Value;
+                    if (linkSelection(value))
+                    {
+                        //WikipediaPage page = new WikipediaPage(query, query.raw);
+                        //links.Add(page);
+                        Console.WriteLine(value);
+                    }
+                }
+                return links;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine("Message :{0} ", e.Message);
+                return null;
+            }
+        }
+        bool linkSelection(string match)
+        {
+            // Set of checks that determine if the match is valid or not
+
+            if (match.Contains("File:"))
+            {
+                return false;
+            }
+            if (match.Contains("Category:"))
+            {
+                return false;
+            }
+            if (match.Contains("Image:"))
+            {
+                return false;
+            }
+            if (match.Contains("wikt:"))
+            {
+                return false;
+            }
+            Regex pattern = new Regex(@":(.*):");
+            if (pattern.IsMatch(match))
+            {
+
+                return false;
+            }
+
+            return true;
+        }
         public override string ToString()
         {
             return $"title: {raw}, link: {link}, displayName: {displayName}";
@@ -77,76 +151,7 @@ Welcome to your new app.
             }
         }
     }
-    public async void httpsRequest(WikipediaPage query)
-    {
-        // This function updates our links list for a certain page ('input')
-        // Call asynchronous network methods in a try/catch block to handle exceptions.
-        try
-        {
-            string input = query.link;
-            string url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvslots=*&rvprop=content&titles=" + input;
-            using HttpResponseMessage response = await myRequest.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-            // Above three lines can be replaced with new helper method below
-            // string responseBody = await client.GetStringAsync(uri);
-
-            //Console.WriteLine(responseBody);
-            JObject responseJSON = JObject.Parse(responseBody);
-            //Console.WriteLine(responseJSON["query"]);
-
-            JObject pagesJSON = (JObject)responseJSON["query"]["pages"];
-            string pageId = pagesJSON.Properties().Select(p => p.Name).ToList()[0];
-            //Any weird shit will get caught by try/catch
-            string pageContent = responseJSON["query"]["pages"][pageId]["revisions"][0]["slots"]["main"]["*"].ToString();
-
-
-            Regex pattern = new Regex(@"\[\[(.*?)\]\]"); //Regex generously donated by OpenAI's ChatGPT
-
-            MatchCollection matchCollection = pattern.Matches(pageContent);
-            links.Clear();
-            foreach (Match deepMatch in matchCollection)
-            {
-                string value = deepMatch.Value;
-                if (linkSelection(value))
-                {
-                    WikipediaPage page = new WikipediaPage(query, query.raw, this);
-                    links.Add(page);
-                    Console.WriteLine(value);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("\nException Caught!");
-            Console.WriteLine("Message :{0} ", e.Message);
-        }
-    }
-    bool linkSelection(string match)
-    {
-        // Set of checks that determine if the match is valid or not
-
-        if (match.Contains("File:"))
-        {
-            return false;
-        }
-        if (match.Contains("Category:"))
-        {
-            return false;
-        }
-        if (match.Contains("wikt:"))
-        {
-            return false;
-        }
-        Regex pattern = new Regex(@":(.*):");
-        if (pattern.IsMatch(match))
-        {
-
-            return false;
-        }
-
-        return true;
-    }
+    
 
 
 
