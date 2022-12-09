@@ -28,8 +28,39 @@ Welcome to your new app.
         // Main method that gets called when button is clicked
         Console.WriteLine(input);
         WikipediaPage sourcePage = new WikipediaPage(null, input);
+        BFS(sourcePage, endpoint);
+
+    }
+
+    public void BFS(WikipediaPage source, string desired)
+    {
+        HashSet<string> bekendePaginaLinks = new HashSet<string>();
+        Queue<WikipediaPage> BFSqueue = new Queue<WikipediaPage>();
+        BFSqueue.Enqueue(source);
+
+        while (BFSqueue.Count > 0)
+        {
+            WikipediaPage current = BFSqueue.Dequeue();
+
+            if (current.link == desired)
+            {
+                //printParentsRoute(current);
+                Console.WriteLine("WAHOOO YES");
+                return;
+            }
+
+            current.createLinkList();
+            List<WikipediaPage> allLinksFromSource = current.pageLinks; // NPE waarom?
+            foreach (WikipediaPage linkedPage in allLinksFromSource)
+            {
+                if(!(bekendePaginaLinks.Contains(linkedPage.link))){ //needs testing
+                    BFSqueue.Enqueue(linkedPage);
+                    bekendePaginaLinks.Add(linkedPage.link);
+                }
+            }
 
 
+        }
     }
 
     public class WikipediaPage
@@ -47,14 +78,13 @@ Welcome to your new app.
             string[] titleSplit = trimmedTitle.Split('|');
             this.link = titleSplit[0];
             this.displayName = titleSplit[titleSplit.Length - 1];
-            createLinkList(); // sets this.pageLinks to list of links
 
         }
 
         public async void createLinkList()
         {
             var something = await httpsRequest(this);
-            pageLinks = something;
+            this.pageLinks = something;
         }
         public async Task<List<WikipediaPage>> httpsRequest(WikipediaPage page)
         {
