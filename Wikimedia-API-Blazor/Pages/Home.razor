@@ -21,7 +21,7 @@ Welcome to your new app.
 
     public List<WikipediaPage> links = new List<WikipediaPage>();
     string input;
-    string endpoint;
+    string endpoint = "Fiji";
 
     void StartProcess()
     {
@@ -32,7 +32,7 @@ Welcome to your new app.
 
     }
 
-    public void BFS(WikipediaPage source, string desired)
+    public async void BFS(WikipediaPage source, string desired)
     {
         HashSet<string> bekendePaginaLinks = new HashSet<string>();
         Queue<WikipediaPage> BFSqueue = new Queue<WikipediaPage>();
@@ -40,17 +40,19 @@ Welcome to your new app.
 
         while (BFSqueue.Count > 0)
         {
+
             WikipediaPage current = BFSqueue.Dequeue();
 
             if (current.link == desired)
             {
-                //printParentsRoute(current);
+                printParentsRoute(current);
                 Console.WriteLine("WAHOOO YES");
                 return;
             }
 
-            current.createLinkList();
-            List<WikipediaPage> allLinksFromSource = current.pageLinks; // NPE waarom?
+            current.pageLinks = await current.httpsRequest(current);
+            List<WikipediaPage> allLinksFromSource = current.pageLinks;
+
             foreach (WikipediaPage linkedPage in allLinksFromSource)
             {
                 if(!(bekendePaginaLinks.Contains(linkedPage.link))){ //needs testing
@@ -59,7 +61,15 @@ Welcome to your new app.
                 }
             }
 
-
+        }
+    }
+    public void printParentsRoute(WikipediaPage page)
+    {
+        Console.WriteLine("Page found, this is the route:");
+        while(page.parent != null)
+        {
+            Console.WriteLine(page);
+            page = page.parent;
         }
     }
 
@@ -81,11 +91,6 @@ Welcome to your new app.
 
         }
 
-        public async void createLinkList()
-        {
-            var something = await httpsRequest(this);
-            this.pageLinks = something;
-        }
         public async Task<List<WikipediaPage>> httpsRequest(WikipediaPage page)
         {
             // This function updates our links list for a certain page ('input')
@@ -102,7 +107,6 @@ Welcome to your new app.
                 // Above three lines can be replaced with new helper method below
                 // string responseBody = await client.GetStringAsync(uri);
 
-                Console.WriteLine(responseBody);
                 JObject responseJSON = JObject.Parse(responseBody);
                 //Console.WriteLine(responseJSON["query"]);
 
@@ -121,18 +125,16 @@ Welcome to your new app.
                     string value = deepMatch.Value;
                     if (linkSelection(value))
                     {
-                        //WikipediaPage page = new WikipediaPage(query, query.raw);
-                        //links.Add(page);
-                        Console.WriteLine(value);
+                        WikipediaPage outputPage = new WikipediaPage(page, value);
+                        links.Add(outputPage);
                     }
                 }
                 return links;
             }
             catch (Exception e)
             {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", e.Message);
-                return null;
+                Console.WriteLine("Weird thing happened with page " + page.raw + "\nPage was skipped just to be sure");
+                return new List<WikipediaPage>();
             }
         }
         bool linkSelection(string match)
